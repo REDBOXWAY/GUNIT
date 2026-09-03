@@ -35,6 +35,37 @@
             font-size: 13px;
             opacity: 0.9;
         }
+        /* Панель фильтров категорий */
+        .filter-container {
+            background: white;
+            padding: 12px 15px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 65px; /* Высота шапки, чтобы фильтры липли сразу под ней */
+            z-index: 999;
+            white-space: nowrap;
+        }
+        .filter-btn {
+            background-color: #f0f2f5;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover {
+            background-color: #e4e6eb;
+        }
+        .filter-btn.active {
+            background-color: #075e54;
+            color: white;
+        }
         .container {
             max-width: 1200px;
             margin: 20px auto;
@@ -116,44 +147,99 @@
         <p>Выберите товар и оформите заказ в один клик через WhatsApp</p>
     </header>
 
+    <!-- Кнопки категорий (фильтры) -->
+    <div class="filter-container" id="filter-buttons">
+        <!-- Кнопки генерируются автоматически через JavaScript -->
+    </div>
+
     <div class="container" id="product-list">
         <!-- Товары генерируются автоматически через JavaScript -->
     </div>
 
     <script>
         // УКАЖИТЕ СВОЙ НОМЕР WHATSAPP (без плюса, например: 79991234567)
-        const whatsappNumber = "994505750978";
+        const whatsappNumber = "79991234567";
 
-        // Список товаров (сюда можно добавлять свои товары, меняя картинку, название и цену)
+        // Список товаров (у каждого товара появилось поле category для фильтрации)
         const products = [
             {
                 id: 1,
-                name: "Товар №1",
-                description: "Описание товара, его главные характеристики и преимущества.",
+                name: "Умные часы",
+                category: "electronics",
+                description: "Стильные смарт-часы с трекером активности и уведомлениями.",
                 price: "1500 руб.",
                 image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60"
             },
             {
                 id: 2,
-                name: "Товар №2",
-                description: "Краткое описание второй позиции в вашем ассортименте.",
+                name: "Беспроводные наушники",
+                category: "electronics",
+                description: "Гарнитура с чистым звуком и долгим временем работы.",
                 price: "2400 руб.",
                 image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60"
             },
             {
                 id: 3,
-                name: "Товар №3",
-                description: "Отличный выбор для ваших клиентов. Высокое качество.",
+                name: "Спортивные кроссовки",
+                category: "shoes",
+                description: "Легкие и удобные кроссовки для бега и повседневной носки.",
                 price: "3200 руб.",
                 image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=60"
+            },
+            {
+                id: 4,
+                name: "Стильный рюкзак",
+                category: "accessories",
+                description: "Вместительный городской рюкзак с отделением для ноутбука.",
+                price: "1900 руб.",
+                image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60"
             }
         ];
 
-        const container = document.getElementById('product-list');
+        // Список доступных категорий
+        const categories = [
+            { id: "all", name: "Все товары" },
+            { id: "electronics", name: "Электроника" },
+            { id: "shoes", name: "Обувь" },
+            { id: "accessories", name: "Аксессуары" }
+        ];
 
+        const filterContainer = document.getElementById('filter-buttons');
+        const productContainer = document.getElementById('product-list');
+
+        let currentCategory = "all";
+
+        // Функция отрисовки кнопок фильтров
+        function renderFilters() {
+            filterContainer.innerHTML = '';
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `filter-btn ${cat.id === currentCategory ? 'active' : ''}`;
+                btn.textContent = cat.name;
+                btn.onclick = () => {
+                    currentCategory = cat.id;
+                    renderFilters();
+                    renderProducts();
+                };
+                filterContainer.appendChild(btn);
+            });
+        }
+
+        // Функция отрисовки товаров (с учетом выбранного фильтра)
         function renderProducts() {
-            container.innerHTML = '';
-            products.forEach(product => {
+            productContainer.innerHTML = '';
+            
+            // Фильтрация массива товаров
+            const filteredProducts = currentCategory === "all" 
+                ? products 
+                : products.filter(p => p.category === currentCategory);
+
+            if (filteredProducts.length === 0) {
+                productContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #775; padding: 40px;">В этой категории пока нет товаров.</p>';
+                return;
+            }
+
+            filteredProducts.forEach(product => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
@@ -169,7 +255,7 @@
                         </div>
                     </div>
                 `;
-                container.appendChild(card);
+                productContainer.appendChild(card);
             });
         }
 
@@ -180,6 +266,8 @@
             window.open(url, '_blank');
         }
 
+        // Первичный запуск отрисовки
+        renderFilters();
         renderProducts();
     </script>
 
