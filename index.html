@@ -44,7 +44,7 @@
             overflow-x: auto;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             position: sticky;
-            top: 65px; /* Высота шапки, чтобы фильтры липли сразу под ней */
+            top: 65px;
             z-index: 999;
             white-space: nowrap;
         }
@@ -121,22 +121,20 @@
             font-weight: 700;
             color: #27ae60;
         }
+        /* Кнопка заказа в цвет шапки */
         .btn-order {
-            background-color: #25d366;
+            background-color: #075e54;
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
+            padding: 8px 16px;
+            border-radius: 6px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
         .btn-order:hover {
-            background-color: #128c7e;
+            background-color: #0b6b60;
         }
     </style>
 </head>
@@ -147,20 +145,18 @@
         <p>Выберите товар и оформите заказ в один клик через WhatsApp</p>
     </header>
 
-    <!-- Кнопки категорий (фильтры) -->
     <div class="filter-container" id="filter-buttons">
-        <!-- Кнопки генерируются автоматически через JavaScript -->
+        <!-- Кнопки категорий -->
     </div>
 
     <div class="container" id="product-list">
-        <!-- Товары генерируются автоматически через JavaScript -->
+        <!-- Товары -->
     </div>
 
     <script>
         // УКАЖИТЕ СВОЙ НОМЕР WHATSAPP (без плюса, например: 79991234567)
         const whatsappNumber = "79991234567";
 
-        // Список товаров (у каждого товара появилось поле category для фильтрации)
         const products = [
             {
                 id: 1,
@@ -196,7 +192,6 @@
             }
         ];
 
-        // Список доступных категорий
         const categories = [
             { id: "all", name: "Все товары" },
             { id: "electronics", name: "Электроника" },
@@ -209,7 +204,6 @@
 
         let currentCategory = "all";
 
-        // Функция отрисовки кнопок фильтров
         function renderFilters() {
             filterContainer.innerHTML = '';
             categories.forEach(cat => {
@@ -225,17 +219,15 @@
             });
         }
 
-        // Функция отрисовки товаров (с учетом выбранного фильтра)
         function renderProducts() {
             productContainer.innerHTML = '';
             
-            // Фильтрация массива товаров
             const filteredProducts = currentCategory === "all" 
                 ? products 
                 : products.filter(p => p.category === currentCategory);
 
             if (filteredProducts.length === 0) {
-                productContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #775; padding: 40px;">В этой категории пока нет товаров.</p>';
+                productContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #777; padding: 40px;">В этой категории пока нет товаров.</p>';
                 return;
             }
 
@@ -266,7 +258,6 @@
             window.open(url, '_blank');
         }
 
-        // Первичный запуск отрисовки
         renderFilters();
         renderProducts();
     </script>
