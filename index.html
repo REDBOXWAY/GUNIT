@@ -1,1 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Онлайн-каталог продукции</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            padding-bottom: 50px;
+        }
+        header {
+            background-color: #075e54;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #e0e0e0;
+        }
+        .card-body {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .card-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        .price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #27ae60;
+        }
+        .btn-order {
+            background-color: #25d366;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-order:hover {
+            background-color: #128c7e;
+        }
+    </style>
+</head>
+<body>
 
+    <header>
+        <h1>Наш каталог продукции</h1>
+        <p>Выберите товар и оформите заказ в один клик через WhatsApp</p>
+    </header>
+
+    <div class="container" id="product-list">
+        </div>
+
+    <script>
+        // УКАЖИТЕ СВОЙ НОМЕР WHATSAPP (без плюса, например: 79991234567)
+        const whatsappNumber = "79991234567";
+
+        // Список ваших товаров (вы можете легко добавлять новые или менять старые)
+        const products = [
+            {
+                id: 1,
+                name: "Товар №1",
+                description: "Описание товара, его главные характеристики и преимущества.",
+                price: "1500 руб.",
+                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60"
+            },
+            {
+                id: 2,
+                name: "Товар №2",
+                description: "Краткое описание второй позиции в вашем ассортименте.",
+                price: "2400 руб.",
+                image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60"
+            },
+            {
+                id: 3,
+                name: "Товар №3",
+                description: "Отличный выбор для ваших клиентов. Высокое качество.",
+                price: "3200 руб.",
+                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=60"
+            }
+        ];
+
+        const container = document.getElementById('product-list');
+
+        function renderProducts() {
+            container.innerHTML = '';
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <div class="card-body">
+                        <div class="card-title">${product.name}</div>
+                        <div class="card-desc">${product.description}</div>
+                        <div class="card-footer">
+                            <span class="price">${product.price}</span>
+                            <button class="btn-order" onclick="orderProduct('${product.name}', '${product.price}')">
+                                Заказать
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function orderProduct(name, price) {
+            const message = `Здравствуйте! Я хочу заказать товар: *${name}* (${price}). Уточните, пожалуйста, наличие и условия доставки.`;
+            const encodedMessage = encodeURIComponent(message);
+            const url = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+            window.open(url, '_blank');
+        }
+
+        renderProducts();
+    </script>
+
+</body>
+</html>
