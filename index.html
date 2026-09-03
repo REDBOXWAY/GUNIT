@@ -16,7 +16,7 @@
             color: #333;
             padding-bottom: 50px;
         }
-        /* Закрепляем шапку при скролле */
+        /* Закрепленная шапка при скролле */
         header {
             background-color: #075e54;
             color: white;
@@ -25,7 +25,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             position: sticky;
             top: 0;
-            z-index: 1000; /* Чтобы шапка всегда была поверх остальных элементов */
+            z-index: 1000;
         }
         header h1 {
             font-size: 20px;
@@ -117,13 +117,14 @@
     </header>
 
     <div class="container" id="product-list">
-        </div>
+        <!-- Товары генерируются автоматически через JavaScript -->
+    </div>
 
     <script>
         // УКАЖИТЕ СВОЙ НОМЕР WHATSAPP (без плюса, например: 79991234567)
         const whatsappNumber = "79991234567";
 
-        // Список ваших товаров
+        // Список товаров (сюда можно добавлять свои товары, меняя картинку, название и цену)
         const products = [
             {
                 id: 1,
@@ -162,7 +163,7 @@
                         <div class="card-desc">${product.description}</div>
                         <div class="card-footer">
                             <span class="price">${product.price}</span>
-                            <button class="btn-order" onclick="orderProduct('${product.name}', '${product.price}')">
+                            <button class="btn-order" onclick="orderProduct('${product.name}', '${product.price}', '${product.image}')">
                                 Заказать
                             </button>
                         </div>
@@ -172,8 +173,8 @@
             });
         }
 
-        function orderProduct(name, price) {
-            const message = `Здравствуйте! Я хочу заказать товар: *${name}* (${price}). Уточните, пожалуйста, наличие и условия доставки.`;
+        function orderProduct(name, price, image) {
+            const message = `Здравствуйте! Я хочу заказать товар:\n▪️ *${name}*\n▪️ Цена: ${price}\n▪️ Фото товара: ${image}\n\nУточните, пожалуйста, наличие и условия доставки.`;
             const encodedMessage = encodeURIComponent(message);
             const url = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
             window.open(url, '_blank');
