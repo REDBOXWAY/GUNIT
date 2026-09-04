@@ -52,7 +52,6 @@
             background-color: #f0f2f5;
             border: none;
             padding: 8px 16px;
-            /* Изменили с 20px на 6px, чтобы сделать форму прямоугольной с мягкими углами */
             border-radius: 6px;
             font-size: 14px;
             font-weight: 600;
@@ -150,13 +149,19 @@
     </header>
 
     <div class="filter-container" id="filter-buttons">
-        </div>
+        <!-- Кнопки категорий -->
+    </div>
 
     <div class="container" id="product-list">
-        </div>
+        <!-- Товары -->
+    </div>
 
     <script>
+        // УКАЖИТЕ СВОЙ НОМЕР WHATSAPP (без плюса)
         const whatsappNumber = "994505750978";
+
+        // ВСТАВЬТЕ СЮДА ССЫЛКУ ИЗ GOOGLE APPS SCRIPT (вида https://script.google.com/macros/s/.../exec)
+        const googleScriptUrl = "https://script.google.com/macros/s/AKfycbydjWFFFjq4xJD_VrCqdDoeYC8uMiKaFZeQFz_uCFqAVTUf1sw7xcrT-6JVuWqJhxgpog/exec";
 
         const products = [
             {
@@ -253,6 +258,19 @@
         }
 
         function orderProduct(name, price, image) {
+            // 1. Отправляем данные в Google Таблицу в фоновом режиме
+            if (googleScriptUrl && googleScriptUrl !== "ВАШ_URL_ВЕБ_ПРИЛОЖЕНИЯ") {
+                fetch(googleScriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: name, price: price, image: image })
+                }).catch(error => console.error('Ошибка отправки в таблицу:', error));
+            }
+
+            // 2. Открываем WhatsApp с готовым сообщением
             const message = `Здравствуйте! Я хочу заказать товар:\n▪️ *${name}*\n▪️ Цена: ${price}\n▪️ Фото товара: ${image}\n\nУточните, пожалуйста, наличие и условия доставки.`;
             const encodedMessage = encodeURIComponent(message);
             const url = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
