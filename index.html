@@ -81,7 +81,7 @@
 
     <header>
         <h1>Наш каталог продукции</h1>
-        <p>Выберите товар и оформите заказ в один клик</p>
+        <p>Выберите товар и оформите заказ в один клик через WhatsApp</p>
     </header>
 
     <main>
@@ -90,6 +90,9 @@
     </main>
 
     <script>
+        // Укажите ваш номер WhatsApp в международном формате без плюса (например: 79991234567)
+        const WHATSAPP_NUMBER = '79991234567';
+
         // Список товаров
         const products = [
             {
@@ -135,9 +138,10 @@
         const SUPABASE_KEY = 'sb_publishable_uxtVE-nD92Z4xpi1fX_Xtg_9vhS_oEI';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Функция отправки заказа в базу
+        // Функция отправки заказа в базу и открытия WhatsApp
         async function submitOrder(productName, productPrice, productImage) {
             try {
+                // 1. Сохраняем в Supabase
                 const { data, error } = await _supabase
                     .from('orders')
                     .insert([
@@ -149,9 +153,14 @@
                     ]);
 
                 if (error) throw error;
-
                 console.log('Заказ сохранен в Supabase:', data);
-                alert('Заказ успешно оформлен!');
+
+                // 2. Формируем сообщение и открываем WhatsApp
+                const message = `Здравствуйте! Я хочу заказать: ${productName} (${productPrice}). Картинка: ${productImage}`;
+                const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+                
+                window.open(url, '_blank');
+
             } catch (err) {
                 console.error('Ошибка:', err.message);
                 alert('Ошибка отправки: ' + err.message);
