@@ -34,6 +34,8 @@
 
         // Функция отправки заказа в базу
         async function submitOrder(productName, productPrice, productImage) {
+            console.log('Отправка в Supabase:', { productName, productPrice, productImage });
+            
             try {
                 const { data, error } = await _supabase
                     .from('orders')
@@ -49,22 +51,30 @@
                     throw error;
                 }
 
-                console.log('Заказ успешно сохранен в Supabase:', data);
+                console.log('Успешно сохранено в базу:', data);
                 alert('Заказ успешно оформлен!');
                 
             } catch (err) {
-                console.error('Ошибка при оформлении заказа:', err.message);
-                alert('Не удалось отправить заказ. Ошибка: ' + err.message);
+                console.error('Ошибка Supabase:', err.message);
+                alert('Ошибка отправки: ' + err.message);
             }
         }
 
-        // Обработка клика по кнопке «Заказать» в карточке товара
+        // Отслеживаем клики на странице
         document.addEventListener('click', function(event) {
+            console.لتг ('Клик по элементу:', event.target); // Логируем любой клик
+
+            // Ищем кнопку заказа
             const btn = event.target.closest('button') || event.target.closest('.order-btn') || event.target;
             
             if (btn && (btn.innerText.includes('Заказать') || btn.classList.contains('buy-btn'))) {
+                console.log('Кнопка "Заказать" обнаружена!');
+                
                 const card = btn.closest('.product-card') || btn.closest('div');
-                if (!card) return;
+                if (!card) {
+                    console.log('Карточка товара не найдена!');
+                    return;
+                }
                 
                 const nameEl = card.querySelector('h3') || card.querySelector('.product-name');
                 const priceEl = card.querySelector('.price') || card.querySelector('.product-price');
@@ -73,6 +83,8 @@
                 const productName = nameEl ? nameEl.innerText.trim() : 'Товар';
                 const productPrice = priceEl ? priceEl.innerText.trim() : '';
                 const productImage = imgEl ? imgEl.src : '';
+
+                console.log('Собранные данные товара:', { productName, productPrice, productImage });
 
                 submitOrder(productName, productPrice, productImage);
             }
