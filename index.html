@@ -5,25 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мой каталог товаров</title>
     
-    <!-- Подключаем стили (если у вас свой файл стилей, оставьте его) -->
+    <!-- Стили -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- 1. ПОДКЛЮЧАЕМ БИБЛИОТЕКУ SUPABASE -->
+    <!-- Подключаем библиотеку Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <!-- Ваша верстка каталога -->
     <header>
         <h1>Каталог товаров</h1>
     </header>
 
     <main>
-        <!-- Контейнер, куда выводятся товары -->
+        <!-- Контейнер для товаров -->
         <div id="product-list"></div>
     </main>
 
-    <!-- 2. ПОДКЛЮЧАЕМ ВАШ СКРИПТ -->
-    <script src="script.js"></script>
+    <!-- Вся логика сайта и отправки заказов в Supabase прямо здесь -->
+    <script>
+        // Настройки подключения к Supabase
+        const SUPABASE_URL = 'https://ikiczqwiziffnulnlpvb.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_uxtVE-nD92Z4xpi1fX_Xtg_9vhS_oEI';
+
+        // Инициализация клиента Supabase
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Функция отправки заказа в базу
+        async function submitOrder(productName, productPrice, productImage) {
+            try {
+                const { data, error } = await _supabase
+                    .from('orders')
+                    .insert([
+                        { 
+                            name: productName, 
+                            price: productPrice, 
+                            image: productImage 
+                        }
+                    ]);
+
+                if (error) {
+                    throw error;
+                }
+
+                console.log('Заказ успешно сохранен в Supabase:', data);
+                alert('Заказ успешно оформлен!');
+                
+            } catch (err) {
+                console.error('Ошибка при оформлении заказа:', err.message);
+                alert('Не удалось отправить заказ. Попробуйте еще раз.');
+            }
+        }
+
+        // Пример обработки клика по кнопке покупки в каталоге
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('buy-btn')) {
+                const card = event.target.closest('.product-card');
+                
+                const name = card.querySelector('.product-name').innerText;
+                const price = card.querySelector('.product-price').innerText;
+                const image = card.querySelector('img').src;
+
+                submitOrder(name, price, image);
+            }
+        });
+    </script>
 </body>
 </html>
