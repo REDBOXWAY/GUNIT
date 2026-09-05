@@ -5,17 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Наш каталог продукции</title>
     
-    <!-- Стили -->
-    <link rel="stylesheet" href="style.css">
-
     <!-- Подключаем библиотеку Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            text-align: center;
+            background: #195e3b;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        #product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .product-card h3 {
+            margin: 10px 0 5px;
+            font-size: 18px;
+        }
+        .product-card p {
+            color: #666;
+            font-size: 14px;
+            flex-grow: 1;
+        }
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+        .price {
+            font-weight: bold;
+            font-size: 16px;
+            color: #195e3b;
+        }
+        .buy-btn {
+            background: #195e3b;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .buy-btn:hover {
+            background: #12442b;
+        }
+    </style>
 </head>
 <body>
 
     <header>
         <h1>Наш каталог продукции</h1>
-        <p>Выберите товар и оформите заказ в один клик через WhatsApp</p>
+        <p>Выберите товар и оформите заказ в один клик</p>
     </header>
 
     <main>
@@ -23,19 +89,54 @@
         <div id="product-list"></div>
     </main>
 
-    <!-- Логика каталога и отправки заказов в Supabase -->
     <script>
+        // Список товаров
+        const products = [
+            {
+                name: "Умные часы",
+                price: "1500 руб.",
+                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60",
+                desc: "Стильные смарт-часы с трекером активности и уведомлениями."
+            },
+            {
+                name: "Беспроводные наушники",
+                price: "2400 руб.",
+                image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60",
+                desc: "Гарнитура с чистым звуком и долгим временем работы."
+            },
+            {
+                name: "Спортивные кроссовки",
+                price: "3200 руб.",
+                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=60",
+                desc: "Легкие и удобные кроссовки для бега и повседневной носки."
+            }
+        ];
+
+        // Функция отрисовки товаров на странице
+        function renderProducts() {
+            const container = document.getElementById('product-list');
+            container.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <img src="${p.image}" alt="${p.name}">
+                    <h3 class="product-name">${p.name}</h3>
+                    <p>${p.desc}</p>
+                    <div class="card-footer">
+                        <span class="product-price">${p.price}</span>
+                        <button class="buy-btn">Заказать</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        renderProducts();
+
         // Настройки подключения к Supabase
         const SUPABASE_URL = 'https://ikiczqwiziffnulnlpvb.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_uxtVE-nD92Z4xpi1fX_Xtg_9vhS_oEI';
-
-        // Инициализация клиента Supabase
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Функция отправки заказа в базу
         async function submitOrder(productName, productPrice, productImage) {
-            console.log('Отправка в Supabase:', { productName, productPrice, productImage });
-            
             try {
                 const { data, error } = await _supabase
                     .from('orders')
@@ -47,46 +148,26 @@
                         }
                     ]);
 
-                if (error) {
-                    throw error;
-                }
+                if (error) throw error;
 
-                console.log('Успешно сохранено в базу:', data);
+                console.log('Заказ сохранен в Supabase:', data);
                 alert('Заказ успешно оформлен!');
-                
             } catch (err) {
-                console.error('Ошибка Supabase:', err.message);
+                console.error('Ошибка:', err.message);
                 alert('Ошибка отправки: ' + err.message);
             }
         }
 
-        // Отслеживаем клики на странице
+        // Обработка клика по кнопке «Заказать»
         document.addEventListener('click', function(event) {
-            console.لتг ('Клик по элементу:', event.target); // Логируем любой клик
+            const btn = event.target.closest('.buy-btn');
+            if (btn) {
+                const card = btn.closest('.product-card');
+                const name = card.querySelector('.product-name').innerText;
+                const price = card.querySelector('.product-price').innerText;
+                const image = card.querySelector('img').src;
 
-            // Ищем кнопку заказа
-            const btn = event.target.closest('button') || event.target.closest('.order-btn') || event.target;
-            
-            if (btn && (btn.innerText.includes('Заказать') || btn.classList.contains('buy-btn'))) {
-                console.log('Кнопка "Заказать" обнаружена!');
-                
-                const card = btn.closest('.product-card') || btn.closest('div');
-                if (!card) {
-                    console.log('Карточка товара не найдена!');
-                    return;
-                }
-                
-                const nameEl = card.querySelector('h3') || card.querySelector('.product-name');
-                const priceEl = card.querySelector('.price') || card.querySelector('.product-price');
-                const imgEl = card.querySelector('img');
-
-                const productName = nameEl ? nameEl.innerText.trim() : 'Товар';
-                const productPrice = priceEl ? priceEl.innerText.trim() : '';
-                const productImage = imgEl ? imgEl.src : '';
-
-                console.log('Собранные данные товара:', { productName, productPrice, productImage });
-
-                submitOrder(productName, productPrice, productImage);
+                submitOrder(name, price, image);
             }
         });
     </script>
