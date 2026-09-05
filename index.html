@@ -54,30 +54,26 @@
                 
             } catch (err) {
                 console.error('Ошибка при оформлении заказа:', err.message);
-                alert('Не удалось отправить заказ. Попробуйте еще раз.');
+                alert('Не удалось отправить заказ. Ошибка: ' + err.message);
             }
         }
 
         // Обработка клика по кнопке «Заказать» в карточке товара
         document.addEventListener('click', function(event) {
-            // Ищем клик по кнопке заказа (проверяем текст или класс кнопки)
             const btn = event.target.closest('button') || event.target.closest('.order-btn') || event.target;
             
             if (btn && (btn.innerText.includes('Заказать') || btn.classList.contains('buy-btn'))) {
-                // Находим карточку товара
                 const card = btn.closest('.product-card') || btn.closest('div');
                 if (!card) return;
                 
-                // Извлекаем данные товара из карточки
                 const nameEl = card.querySelector('h3') || card.querySelector('.product-name');
                 const priceEl = card.querySelector('.price') || card.querySelector('.product-price');
                 const imgEl = card.querySelector('img');
 
-                const productName = nameEl ? nameEl.innerText.trimことが多い : 'Товар';
+                const productName = nameEl ? nameEl.innerText.trim() : 'Товар';
                 const productPrice = priceEl ? priceEl.innerText.trim() : '';
                 const productImage = imgEl ? imgEl.src : '';
 
-                // Отправляем в Supabase
                 submitOrder(productName, productPrice, productImage);
             }
         });
