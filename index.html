@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой каталог товаров</title>
+    <title>Наш каталог продукции</title>
     
     <!-- Стили -->
     <link rel="stylesheet" href="style.css">
@@ -14,7 +14,8 @@
 <body>
 
     <header>
-        <h1>Каталог товаров</h1>
+        <h1>Наш каталог продукции</h1>
+        <p>Выберите товар и оформите заказ в один клик через WhatsApp</p>
     </header>
 
     <main>
@@ -22,7 +23,7 @@
         <div id="product-list"></div>
     </main>
 
-    <!-- Вся логика сайта и отправки заказов в Supabase прямо здесь -->
+    <!-- Логика каталога и отправки заказов в Supabase -->
     <script>
         // Настройки подключения к Supabase
         const SUPABASE_URL = 'https://ikiczqwiziffnulnlpvb.supabase.co';
@@ -57,16 +58,27 @@
             }
         }
 
-        // Пример обработки клика по кнопке покупки в каталоге
+        // Обработка клика по кнопке «Заказать» в карточке товара
         document.addEventListener('click', function(event) {
-            if (event.target.classList.contains('buy-btn')) {
-                const card = event.target.closest('.product-card');
+            // Ищем клик по кнопке заказа (проверяем текст или класс кнопки)
+            const btn = event.target.closest('button') || event.target.closest('.order-btn') || event.target;
+            
+            if (btn && (btn.innerText.includes('Заказать') || btn.classList.contains('buy-btn'))) {
+                // Находим карточку товара
+                const card = btn.closest('.product-card') || btn.closest('div');
+                if (!card) return;
                 
-                const name = card.querySelector('.product-name').innerText;
-                const price = card.querySelector('.product-price').innerText;
-                const image = card.querySelector('img').src;
+                // Извлекаем данные товара из карточки
+                const nameEl = card.querySelector('h3') || card.querySelector('.product-name');
+                const priceEl = card.querySelector('.price') || card.querySelector('.product-price');
+                const imgEl = card.querySelector('img');
 
-                submitOrder(name, price, image);
+                const productName = nameEl ? nameEl.innerText.trimことが多い : 'Товар';
+                const productPrice = priceEl ? priceEl.innerText.trim() : '';
+                const productImage = imgEl ? imgEl.src : '';
+
+                // Отправляем в Supabase
+                submitOrder(productName, productPrice, productImage);
             }
         });
     </script>
